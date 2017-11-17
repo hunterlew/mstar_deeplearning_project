@@ -1,6 +1,6 @@
 clear;
 % 输入，记得转为行优先
-im = imread('160059_96.jpeg') * 2.5;
+im = imread('170136_96.jpeg') * 4;
 im = single(im) / 255.0;
 im = im - mean(im(:));
 im = permute(im, [2, 1, 3]);
@@ -35,8 +35,8 @@ scores = net.forward(input_data);
 toc;
 scores = scores{1};
 [score, label] = max(scores);
-% score
-% label
+score
+label
 
 % 清理内存
 caffe.reset_all();
