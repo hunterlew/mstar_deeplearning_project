@@ -46,6 +46,11 @@ To run the second model:
 <code>cd detection_and_recognition</code><br />
 <code>(run the run_overall.m with matlab)</code><br />
 
+To validate model performance, such as the missing detection rate, false detection rate, recognition rate and the running time:
+
+<code>cd detection_and_recognition</code><br />
+<code>(run the run_apart_validation.m or run_overall_validation.m with matlab)</code><br />
+
 Conclusion
 ----------
 The results seemed successful. But it may be doubtful that I directly inserted several targets, under a certain lightness, into the background without considering the reasonability and the characteristics of SAR images. Therefore, the work needs further considerations and research. 

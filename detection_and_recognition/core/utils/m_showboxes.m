@@ -6,7 +6,7 @@ color = {[1,0,0],[1,0.281250000000000,0],[1,0.562500000000000,0],[1,0.8437500000
 imshow(im);
 for i = 1:L
     rectangle('position',[pick_rois(i,1),pick_rois(i,2),pick_rois(i,3)-pick_rois(i,1),pick_rois(i,4)-pick_rois(i,2)], ...
-            'LineWidth',3,'EdgeColor',color{pick_rois(i,6)});
+            'LineWidth',4,'EdgeColor',color{pick_rois(i,6)});
 %     switch pick_rois(i,6)
 %         case 1  
 %             classname = '2S1';

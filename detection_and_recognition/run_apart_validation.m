@@ -4,11 +4,12 @@ clc;
 clear is_valid_handle; 
 clear;
 
-% 待测试图像
-img_list = dir('.\*.jpg');
-
 % ----------------检测------------------
 addpath(genpath('.\core'));
+% 待测试图像
+load '.\core\imdb\cache\imdb_voc_2007_test.mat';
+img_list = imdb.image_ids;
+
 cd .\core
 % 添加路径 '.\external\caffe\matlab\caffe_faster_rcnn';
 active_caffe_mex(1, 'caffe_faster_rcnn');
@@ -29,6 +30,12 @@ rpn_net.copy_from(fullfile(model_dir, 'proposal_alone'));
 rpn_thres = 0.96;
 nms_thres  = 0.6;
 nms_thres_again = 0.3;
+% ----该参数下指标----
+% Mean time used: 0.034s
+% Real target number: 375
+% Missing alarm: 3.2%
+% False alarm: 2.7%
+% Recognition rate: 94.2%
 
 % 预加载热身，有利于更好地计算时间
 for j = 1:2 
@@ -41,7 +48,7 @@ end
 
 for i = 1:length(img_list)
     th = tic();
-    im = gpuArray(imread(['..\' img_list(i).name]));
+    im = gpuArray(imread(['.\datasets\VOCdevkit2007\VOC2007\JPEGImages\' char(img_list(i)) '.jpg']));
     % 检测
     [boxes, det_scores] = proposal_im_detect(conf_proposal, rpn_net, im);
     aboxes = boxes_filter([boxes, det_scores], rpn_thres, nms_thres);
@@ -93,13 +100,15 @@ for i = 1:length(img_list)
     aboxes = aboxes(nms(aboxes(:, 1:5), nms_thres_again), :);
     aboxes = aboxes(aboxes(:, 5) >= 0.5, :);
     this_time = time{i} + toc(th);
-    fprintf('%s : %.3fs \n', img_list(i).name, this_time);
+    fprintf('%s : %.3fs \n', [char(img_list(i)) '.jpeg'], this_time);
     time_sum = time_sum + this_time;
     % 保存，用于计算指标
-    figure(i);
-    m_showboxes(imread(img_list(i).name), aboxes);
+    allboxes_2{i} = aboxes;
 end
 rmpath(genpath('.\core'));
+
+% 计算指标
+compute_evaluations(img_list, allboxes_2, time_sum);
 
 % 区域修正，需要保证输入是96*96
 function [patches, proposals] = rois_modified(im, patches)

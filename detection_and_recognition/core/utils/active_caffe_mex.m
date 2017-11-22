@@ -5,9 +5,6 @@ function active_caffe_mex(gpu_id, caffe_version)
 % Copyright (c) 2015, Shaoqing Ren
 % Licensed under The MIT License [see LICENSE for details]
 % --------------------------------------------------------
-
-    rmpath('D:\BVLC-caffe-windows-release\caffe-windows\matlab');
-    rmpath('D:\BVLC-caffe-windows-release\caffe-windows\build\Matlab');
     
     % set gpu in matlab
     gpuDevice(gpu_id);
