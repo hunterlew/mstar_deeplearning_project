@@ -1,0 +1,13 @@
+net: ".\\models\\fast_rcnn_prototxts\\ZF_fc6\\train_val.prototxt"
+base_lr: 0.0001
+lr_policy: "step"
+gamma: 0.1
+stepsize: 9000
+display: 20
+max_iter: 13500
+momentum: 0.9
+weight_decay: 0.0005
+# We disable standard caffe solver snapshotting and implement our own snapshot
+snapshot: 0
+#debug_info: true
+
