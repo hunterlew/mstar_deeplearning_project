@@ -1,4 +1,4 @@
-name: "mstar-alex"
+name: "mstar-CNN12"
 layer {
   name: "mstar"
   type: "Data"
@@ -42,12 +42,13 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 16
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -82,12 +83,13 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 32
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -122,12 +124,13 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 64
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -149,7 +152,7 @@ layer {
   top: "pool3"
   pooling_param {
     pool: MAX
-    kernel_size: 3
+    kernel_size: 2
     stride: 2
   }
 }
@@ -162,12 +165,13 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 128
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -182,20 +186,30 @@ layer {
   bottom: "conv4"
   top: "conv4"
 }
-
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv4"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
 layer {
   name: "ip1"
   type: "InnerProduct"
-  bottom: "conv4"
+  bottom: "pool4"
   top: "ip1"
   param {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
-    num_output: 128
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -211,15 +225,6 @@ layer {
   top: "ip1"
 }
 layer {
-  name: "drop1"
-  type: "Dropout"
-  bottom: "ip1"
-  top: "ip1"
-  dropout_param {
-    dropout_ratio: 0.5
-  }
-}
-layer {
   name: "ip2"
   type: "InnerProduct"
   bottom: "ip1"
@@ -228,7 +233,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
     num_output: 256
@@ -247,15 +252,6 @@ layer {
   top: "ip2"
 }
 layer {
-  name: "drop2"
-  type: "Dropout"
-  bottom: "ip2"
-  top: "ip2"
-  dropout_param {
-    dropout_ratio: 0.5
-  }
-}
-layer {
   name: "ip3"
   type: "InnerProduct"
   bottom: "ip2"
@@ -264,7 +260,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
     num_output: 10

@@ -1,4 +1,4 @@
-name: "mstar-alex"
+name: "mstar-CNN14"
 layer {
   name: "mstar"
   type: "Data"
@@ -11,7 +11,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/mstar/mstar_train_lmdb"
+    source: "examples/mstar/mstar_train_aug_lmdb"
     batch_size: 32
     backend: LMDB
   }
@@ -28,7 +28,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/mstar/mstar_val_lmdb"
+    source: "examples/mstar/mstar_val_aug_lmdb"
     batch_size: 32
     backend: LMDB
   }
@@ -45,9 +45,10 @@ layer {
     lr_mult: 1
   }
   convolution_param {
-    num_output: 18
-    kernel_size: 9
+    num_output: 16
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -69,8 +70,8 @@ layer {
   top: "pool1"
   pooling_param {
     pool: MAX
-    kernel_size: 6
-    stride: 6
+    kernel_size: 2
+    stride: 2
   }
 }
 layer {
@@ -85,9 +86,10 @@ layer {
     lr_mult: 1
   }
   convolution_param {
-    num_output: 36
-    kernel_size: 5
+    num_output: 32
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -109,23 +111,26 @@ layer {
   top: "pool2"
   pooling_param {
     pool: MAX
-    kernel_size: 4
-    stride: 4
+    kernel_size: 2
+    stride: 2
   }
 }
 layer {
-  name: "ip1"
-  type: "InnerProduct"
+  name: "conv3_1"
+  type: "Convolution"
   bottom: "pool2"
-  top: "ip1"
+  top: "conv3_1"
   param {
     lr_mult: 1
   }
   param {
     lr_mult: 1
   }
-  inner_product_param {
-    num_output: 120
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -135,19 +140,149 @@ layer {
   }
 }
 layer {
-  name: "relu3"
+  name: "relu3_1"
+  type: "ReLU"
+  bottom: "conv3_1"
+  top: "conv3_1"
+}
+layer {
+  name: "conv3_2"
+  type: "Convolution"
+  bottom: "conv3_1"
+  top: "conv3_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3_2"
+  type: "ReLU"
+  bottom: "conv3_2"
+  top: "conv3_2"
+}
+layer {
+  name: "pool3"
+  type: "Pooling"
+  bottom: "conv3_2"
+  top: "pool3"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv4_1"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "conv4_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4_1"
+  type: "ReLU"
+  bottom: "conv4_1"
+  top: "conv4_1"
+}
+layer {
+  name: "conv4_2"
+  type: "Convolution"
+  bottom: "conv4_1"
+  top: "conv4_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4_2"
+  type: "ReLU"
+  bottom: "conv4_2"
+  top: "conv4_2"
+}
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv4_2"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool4"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  inner_product_param {
+    num_output: 256
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu5"
   type: "ReLU"
   bottom: "ip1"
   top: "ip1"
-}
-layer {
-  name: "drop1"
-  type: "Dropout"
-  bottom: "ip1"
-  top: "ip1"
-  dropout_param {
-    dropout_ratio: 0.2
-  }
 }
 layer {
   name: "ip2"
@@ -161,7 +296,7 @@ layer {
     lr_mult: 1
   }
   inner_product_param {
-    num_output: 120
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -171,19 +306,10 @@ layer {
   }
 }
 layer {
-  name: "relu4"
+  name: "relu6"
   type: "ReLU"
   bottom: "ip2"
   top: "ip2"
-}
-layer {
-  name: "drop2"
-  type: "Dropout"
-  bottom: "ip2"
-  top: "ip2"
-  dropout_param {
-    dropout_ratio: 0.2
-  }
 }
 layer {
   name: "ip3"

@@ -10,35 +10,28 @@ The project is supposed to run on win7 or above. Before running the project, ple
 
 Classification
 --------------
-The first part of the work focuses on 10-class radar target classification on standard MSTAR dataset. For the sake of comparisons, I fulfilled 128*128 SAR target classification without data augmentation at the beginning, proving that it can easily outperform [traditional machine learning methods](https://github.com/hunterlew/mstar_with_machine_learning). 
+The first part of the work focuses on 10-class radar target classification on standard MSTAR dataset. For avoiding overfitting, I fulfilled 96*96 SAR target classification with data augmentation using random cropping, proving that it can easily outperform [traditional machine learning methods](https://github.com/hunterlew/mstar_with_machine_learning). 
 
-Run the commands below and you may get 98% accuracy:
-
-<code>cd classification\caffe</code><br />
-<code>create_mstar.bat</code><br />
-<code>train_mstar.bat</code><br />
-
-But I did crop and increase my data to avoid overfitting in my later work about detection and recognition. See below.
-
-Detection and Recognition
--------------------------
-The second part is about how to locate and recognize several SAR targets in a larger background, which may also contain trees and houses, etc. In view of ShaoqingRen's RPN networks, I builded two models with datasets that I made myself. The first model takes only RPN's output as the input of classification network trained before. The second model partially shares the convolution layers between RPN and classification network, which is called faster-rcnn by Ren. You can respectively run the two models and make comparisons.
-
-Before running the test, you should train it first. Make sure you have downloaded the pretrained ZF model and mean.mat from here. Then run the commands:
-
-<code>cd detection_and_recognition\core</code><br />
-<code>(run the train.m with matlab)</code><br />
-
-It will take nearly 30 mins for training and finally will generate output folder with trained model. Remember to copy the RPN's net file and trained model to the output folder and rename them, serving as network files for the run_apart model. 
-
-To run the first model:
+Run the commands below and you may get 96% ~ 99% accuracy:
 
 <code>cd classification\caffe</code><br />
 <code>(run the data_augmentation.m with matlab)</code><br />
 <code>(run the generate_file.m with matlab)</code><br />
-<code>create_mstar_96.bat</code><br />
-<code>train_mstar_96.bat</code><br />
-<code>cd ..\..\detection_and_recognition</code><br />
+<code>create_mstar.bat</code><br />
+<code>train_mstar.bat</code><br />
+
+Detection and Recognition
+-------------------------
+The second part is about how to locate and recognize several SAR targets in a larger background, which may also contain trees and houses, etc. In view of ShaoqingRen's RPN networks, I builded two models with datasets that I made myself. The first model takes only RPN's output as the input of classification network trained before. The second model partially shares the convolution layers between RPN and classification network, which is called faster-rcnn by Ren. You can respectively run the two models and make comparisons. Make sure you have downloaded the pretrained ZF model and mean.mat from [here](https://github.com/ShaoqingRen/faster_rcnn). Then run the commands:
+
+<code>cd detection_and_recognition\core</code><br />
+<code>(run the train.m with matlab)</code><br />
+
+It will take more than an hour for overall training and will finally generate output folder with trained model. Remember to copy the RPN's net file and trained model to the output folder and rename them, serving as network files for the run_apart model. 
+
+To run the first model:
+
+<code>cd detection_and_recognition</code><br />
 <code>(run the run_apart.m with matlab)</code><br />
 
 To run the second model:

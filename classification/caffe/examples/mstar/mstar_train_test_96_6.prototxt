@@ -1,4 +1,4 @@
-name: "mstar-alex"
+name: "mstar-CNN14-bn"
 layer {
   name: "mstar"
   type: "Data"
@@ -11,7 +11,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/mstar/mstar_train_lmdb"
+    source: "examples/mstar/mstar_train_aug_lmdb"
     batch_size: 32
     backend: LMDB
   }
@@ -28,7 +28,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/mstar/mstar_val_lmdb"
+    source: "examples/mstar/mstar_val_aug_lmdb"
     batch_size: 32
     backend: LMDB
   }
@@ -46,8 +46,9 @@ layer {
   }
   convolution_param {
     num_output: 16
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -62,7 +63,7 @@ layer {
   bottom: "conv1"
   top: "conv1"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {
@@ -104,8 +105,9 @@ layer {
   }
   convolution_param {
     num_output: 32
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -120,7 +122,7 @@ layer {
   bottom: "conv2"
   top: "conv2"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {
@@ -150,10 +152,10 @@ layer {
   }
 }
 layer {
-  name: "conv3"
+  name: "conv3_1"
   type: "Convolution"
   bottom: "pool2"
-  top: "conv3"
+  top: "conv3_1"
   param {
     lr_mult: 1
   }
@@ -162,8 +164,9 @@ layer {
   }
   convolution_param {
     num_output: 64
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -173,45 +176,93 @@ layer {
   }
 }
 layer {
-  name: "bn3"
+  name: "bn3_1"
   type: "BatchNorm"
-  bottom: "conv3"
-  top: "conv3"
+  bottom: "conv3_1"
+  top: "conv3_1"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {
-  name: "scale3"
+  name: "scale3_1"
   type: "Scale"
-  bottom: "conv3"
-  top: "conv3"
+  bottom: "conv3_1"
+  top: "conv3_1"
   scale_param {
     bias_term: true
   }
 }
 layer {
-  name: "relu3"
+  name: "relu3_1"
   type: "ReLU"
-  bottom: "conv3"
-  top: "conv3"
+  bottom: "conv3_1"
+  top: "conv3_1"
+}
+layer {
+  name: "conv3_2"
+  type: "Convolution"
+  bottom: "conv3_1"
+  top: "conv3_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "bn3_2"
+  type: "BatchNorm"
+  bottom: "conv3_2"
+  top: "conv3_2"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale3_2"
+  type: "Scale"
+  bottom: "conv3_2"
+  top: "conv3_2"
+  scale_param {
+    bias_term: true
+  }
+}
+layer {
+  name: "relu3_2"
+  type: "ReLU"
+  bottom: "conv3_2"
+  top: "conv3_2"
 }
 layer {
   name: "pool3"
   type: "Pooling"
-  bottom: "conv3"
+  bottom: "conv3_2"
   top: "pool3"
   pooling_param {
     pool: MAX
-    kernel_size: 3
+    kernel_size: 2
     stride: 2
   }
 }
 layer {
-  name: "conv4"
+  name: "conv4_1"
   type: "Convolution"
   bottom: "pool3"
-  top: "conv4"
+  top: "conv4_1"
   param {
     lr_mult: 1
   }
@@ -220,8 +271,9 @@ layer {
   }
   convolution_param {
     num_output: 128
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
@@ -231,33 +283,81 @@ layer {
   }
 }
 layer {
-  name: "bn4"
+  name: "bn4_1"
   type: "BatchNorm"
-  bottom: "conv4"
-  top: "conv4"
+  bottom: "conv4_1"
+  top: "conv4_1"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {
-  name: "scale4"
+  name: "scale4_1"
   type: "Scale"
-  bottom: "conv4"
-  top: "conv4"
+  bottom: "conv4_1"
+  top: "conv4_1"
   scale_param {
     bias_term: true
   }
 }
 layer {
-  name: "relu4"
+  name: "relu4_1"
   type: "ReLU"
-  bottom: "conv4"
-  top: "conv4"
+  bottom: "conv4_1"
+  top: "conv4_1"
+}
+layer {
+  name: "conv4_2"
+  type: "Convolution"
+  bottom: "conv4_1"
+  top: "conv4_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "bn4_2"
+  type: "BatchNorm"
+  bottom: "conv4_2"
+  top: "conv4_2"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale4_2"
+  type: "Scale"
+  bottom: "conv4_2"
+  top: "conv4_2"
+  scale_param {
+    bias_term: true
+  }
+}
+layer {
+  name: "relu4_2"
+  type: "ReLU"
+  bottom: "conv4_2"
+  top: "conv4_2"
 }
 layer {
   name: "pool4"
   type: "Pooling"
-  bottom: "conv4"
+  bottom: "conv4_2"
   top: "pool4"
   pooling_param {
     pool: MAX
@@ -292,7 +392,7 @@ layer {
   bottom: "ip1"
   top: "ip1"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {
@@ -337,7 +437,7 @@ layer {
   bottom: "ip2"
   top: "ip2"
   batch_norm_param {
-    use_global_stats: false
+    moving_average_fraction: 0.8
   }
 }
 layer {

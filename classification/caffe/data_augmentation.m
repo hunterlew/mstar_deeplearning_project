@@ -9,7 +9,7 @@ for i = 0:9
     for j = 3:length(img_list)
         if exist(['.\train_aug\' num2str(i) '\' img_list(j).name], 'file')
             im = imread(['.\train_aug\' num2str(i) '\' img_list(j).name]);
-            im = uint8(im * 4);
+%             im = uint8(im * 4);
             for k = 0:9
                 x = randi(32);
                 y = randi(32);
@@ -44,7 +44,7 @@ for i = 0:9
     for j = 3:length(img_list)
         if exist(['.\val_aug\' num2str(i) '\' img_list(j).name], 'file')
             im = imread(['.\val_aug\' num2str(i) '\' img_list(j).name]);
-            im = uint8(im * 4);
+%             im = uint8(im * 4);
             im = imcrop(im, [17,17,95,95]);
             imwrite(im, ['.\val_aug\' num2str(i) '\' img_list(j).name]);
         end

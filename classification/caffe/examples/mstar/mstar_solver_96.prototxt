@@ -5,7 +5,7 @@ net: "examples/mstar/mstar_train_test_96_2.prototxt"
 # covering the full 10,000 testing images.
 test_iter: 76
 # Carry out testing every 500 training iterations.
-test_interval: 860
+test_interval: 4300
 # The base learning rate, momentum and the weight decay of the network.
 base_lr: 0.01
 momentum: 0.9
@@ -14,13 +14,12 @@ weight_decay: 0.0005
 lr_policy: "multistep"
 gamma: 0.1
 stepvalue: 25800
-stepvalue: 43000
 # Display every 100 iterations
-display: 860
+display: 4300
 # The maximum number of iterations
 max_iter: 51600
 # snapshot intermediate results
 snapshot: 51600
-snapshot_prefix: "examples/mstar/mstar_96"
+snapshot_prefix: "examples/mstar/mstar_96_2"
 # solver mode: CPU or GPU
 solver_mode: GPU

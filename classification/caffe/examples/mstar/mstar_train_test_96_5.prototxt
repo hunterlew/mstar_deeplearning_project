@@ -1,9 +1,37 @@
-name: "mstar-alex"
+name: "mstar-CNN12-bn"
 layer {
-  name: "data"
-  type: "Input"
+  name: "mstar"
+  type: "Data"
   top: "data"
-  input_param { shape: { dim: 1 dim: 1 dim: 96 dim: 96 } }
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mstar/mstar_train_aug_lmdb"
+    batch_size: 32
+    backend: LMDB
+  }
+}
+layer {
+  name: "mstar"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mstar/mstar_val_aug_lmdb"
+    batch_size: 32
+    backend: LMDB
+  }
 }
 layer {
   name: "conv1"
@@ -14,18 +42,37 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 16
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn1"
+  type: "BatchNorm"
+  bottom: "conv1"
+  top: "conv1"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale1"
+  type: "Scale"
+  bottom: "conv1"
+  top: "conv1"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -54,18 +101,37 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 32
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn2"
+  type: "BatchNorm"
+  bottom: "conv2"
+  top: "conv2"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale2"
+  type: "Scale"
+  bottom: "conv2"
+  top: "conv2"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -94,18 +160,37 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 64
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn3"
+  type: "BatchNorm"
+  bottom: "conv3"
+  top: "conv3"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale3"
+  type: "Scale"
+  bottom: "conv3"
+  top: "conv3"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -121,7 +206,7 @@ layer {
   top: "pool3"
   pooling_param {
     pool: MAX
-    kernel_size: 3
+    kernel_size: 2
     stride: 2
   }
 }
@@ -134,18 +219,37 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   convolution_param {
     num_output: 128
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn4"
+  type: "BatchNorm"
+  bottom: "conv4"
+  top: "conv4"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale4"
+  type: "Scale"
+  bottom: "conv4"
+  top: "conv4"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -154,26 +258,54 @@ layer {
   bottom: "conv4"
   top: "conv4"
 }
-
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv4"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
 layer {
   name: "ip1"
   type: "InnerProduct"
-  bottom: "conv4"
+  bottom: "pool4"
   top: "ip1"
   param {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
-    num_output: 128
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn5"
+  type: "BatchNorm"
+  bottom: "ip1"
+  top: "ip1"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale5"
+  type: "Scale"
+  bottom: "ip1"
+  top: "ip1"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -191,7 +323,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
     num_output: 256
@@ -201,6 +333,24 @@ layer {
     bias_filler {
       type: "constant"
     }
+  }
+}
+layer {
+  name: "bn6"
+  type: "BatchNorm"
+  bottom: "ip2"
+  top: "ip2"
+  batch_norm_param {
+    moving_average_fraction: 0.8
+  }
+}
+layer {
+  name: "scale6"
+  type: "Scale"
+  bottom: "ip2"
+  top: "ip2"
+  scale_param {
+    bias_term: true
   }
 }
 layer {
@@ -218,7 +368,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 1
+    lr_mult: 2
   }
   inner_product_param {
     num_output: 10
@@ -231,8 +381,19 @@ layer {
   }
 }
 layer {
-  name: "loss"
-  type: "Softmax"
+  name: "accuracy"
+  type: "Accuracy"
   bottom: "ip3"
-  top: "ip3"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip3"
+  bottom: "label"
+  top: "loss"
 }

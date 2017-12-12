@@ -1,6 +1,6 @@
 clear;
 % 输入，记得转为行优先
-im = imread('170136_96.jpeg') * 4;
+im = imread('140003.jpeg');
 im = single(im) / 255.0;
 im = im - mean(im(:));
 im = permute(im, [2, 1, 3]);
@@ -15,14 +15,14 @@ cd caffe
 addpath(genpath('.\build\Release'));
 
 % 设置gpu或cpu模式
-caffe.set_mode_cpu();
-% caffe.set_mode_gpu();
-% caffe.set_device(0);
+% caffe.set_mode_cpu();
+caffe.set_mode_gpu();
+caffe.set_device(0);
 
 % 加载网络文件
-net_model = '.\examples\mstar\mstar_deploy_96.prototxt';
+net_model = '.\examples\mstar\mstar_deploy_2.prototxt';
 % 加载参数文件
-net_weights = '.\examples\mstar\mstar_96_iter_34400.caffemodel';
+net_weights = '.\examples\mstar\mstar_96_2_iter_51600.caffemodel';
 phase = 'test';
 % 初始化网络
 net = caffe.Net(net_model, net_weights, phase);
