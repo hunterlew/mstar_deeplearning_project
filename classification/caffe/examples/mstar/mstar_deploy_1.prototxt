@@ -1,4 +1,4 @@
-name: "mstar-CNN8"
+name: "mstar-cnn8"
 layer {
   name: "data"
   type: "Input"

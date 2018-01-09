@@ -1,5 +1,5 @@
 # The train/test net protocol buffer definition
-net: "examples/mstar/mstar_train_test_96_1.prototxt"
+net: "examples/mstar/mstar_train_test_96_6.prototxt"
 # test_iter specifies how many forward passes the test should carry out.
 # In the case of MNIST, we have test batch size 100 and 100 test iterations,
 # covering the full 10,000 testing images.
@@ -7,19 +7,19 @@ test_iter: 76
 # Carry out testing every 500 training iterations.
 test_interval: 860
 # The base learning rate, momentum and the weight decay of the network.
-base_lr: 0.01
+base_lr: 0.05
 momentum: 0.9
-weight_decay: 0.0005
+weight_decay: 0.0001
 # The learning rate policy
 lr_policy: "multistep"
 gamma: 0.1
-stepvalue: 25800
+stepvalue: 12900
 # Display every 100 iterations
 display: 4300
 # The maximum number of iterations
-max_iter: 51600
+max_iter: 17200
 # snapshot intermediate results
 snapshot: 860
-snapshot_prefix: "examples/mstar/mstar_96_1"
+snapshot_prefix: "examples/mstar/mstar_96_6"
 # solver mode: CPU or GPU
 solver_mode: GPU

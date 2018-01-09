@@ -1,37 +1,9 @@
-name: "mstar-CNN12"
+name: "mstar-cnn14"
 layer {
-  name: "mstar"
-  type: "Data"
+  name: "data"
+  type: "Input"
   top: "data"
-  top: "label"
-  include {
-    phase: TRAIN
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "examples/mstar/mstar_train_aug_lmdb"
-    batch_size: 32
-    backend: LMDB
-  }
-}
-layer {
-  name: "mstar"
-  type: "Data"
-  top: "data"
-  top: "label"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "examples/mstar/mstar_val_aug_lmdb"
-    batch_size: 32
-    backend: LMDB
-  }
+  input_param { shape: { dim: 1 dim: 1 dim: 96 dim: 96 } }
 }
 layer {
   name: "conv1"
@@ -42,7 +14,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 16
@@ -83,7 +55,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 32
@@ -116,15 +88,15 @@ layer {
   }
 }
 layer {
-  name: "conv3"
+  name: "conv3_1"
   type: "Convolution"
   bottom: "pool2"
-  top: "conv3"
+  top: "conv3_1"
   param {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 64
@@ -140,15 +112,45 @@ layer {
   }
 }
 layer {
-  name: "relu3"
+  name: "relu3_1"
   type: "ReLU"
-  bottom: "conv3"
-  top: "conv3"
+  bottom: "conv3_1"
+  top: "conv3_1"
+}
+layer {
+  name: "conv3_2"
+  type: "Convolution"
+  bottom: "conv3_1"
+  top: "conv3_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3_2"
+  type: "ReLU"
+  bottom: "conv3_2"
+  top: "conv3_2"
 }
 layer {
   name: "pool3"
   type: "Pooling"
-  bottom: "conv3"
+  bottom: "conv3_2"
   top: "pool3"
   pooling_param {
     pool: MAX
@@ -157,15 +159,15 @@ layer {
   }
 }
 layer {
-  name: "conv4"
+  name: "conv4_1"
   type: "Convolution"
   bottom: "pool3"
-  top: "conv4"
+  top: "conv4_1"
   param {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 128
@@ -181,15 +183,45 @@ layer {
   }
 }
 layer {
-  name: "relu4"
+  name: "relu4_1"
   type: "ReLU"
-  bottom: "conv4"
-  top: "conv4"
+  bottom: "conv4_1"
+  top: "conv4_1"
+}
+layer {
+  name: "conv4_2"
+  type: "Convolution"
+  bottom: "conv4_1"
+  top: "conv4_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 128
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4_2"
+  type: "ReLU"
+  bottom: "conv4_2"
+  top: "conv4_2"
 }
 layer {
   name: "pool4"
   type: "Pooling"
-  bottom: "conv4"
+  bottom: "conv4_2"
   top: "pool4"
   pooling_param {
     pool: MAX
@@ -206,7 +238,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   inner_product_param {
     num_output: 256
@@ -225,15 +257,6 @@ layer {
   top: "ip1"
 }
 layer {
-  name: "drop1"
-  type: "Dropout"
-  bottom: "ip1"
-  top: "ip1"
-  dropout_param {
-    dropout_ratio: 0.5
-  }
-}
-layer {
   name: "ip2"
   type: "InnerProduct"
   bottom: "ip1"
@@ -242,7 +265,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   inner_product_param {
     num_output: 256
@@ -261,15 +284,6 @@ layer {
   top: "ip2"
 }
 layer {
-  name: "drop2"
-  type: "Dropout"
-  bottom: "ip2"
-  top: "ip2"
-  dropout_param {
-    dropout_ratio: 0.5
-  }
-}
-layer {
   name: "ip3"
   type: "InnerProduct"
   bottom: "ip2"
@@ -278,7 +292,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   inner_product_param {
     num_output: 10
@@ -291,19 +305,8 @@ layer {
   }
 }
 layer {
-  name: "accuracy"
-  type: "Accuracy"
-  bottom: "ip3"
-  bottom: "label"
-  top: "accuracy"
-  include {
-    phase: TEST
-  }
-}
-layer {
   name: "loss"
-  type: "SoftmaxWithLoss"
+  type: "Softmax"
   bottom: "ip3"
-  bottom: "label"
   top: "loss"
 }

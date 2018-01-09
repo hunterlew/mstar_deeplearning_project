@@ -1,37 +1,9 @@
-name: "mstar-CNN12"
+name: "mstar-cnn12"
 layer {
-  name: "mstar"
-  type: "Data"
+  name: "data"
+  type: "Input"
   top: "data"
-  top: "label"
-  include {
-    phase: TRAIN
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "examples/mstar/mstar_train_aug_lmdb"
-    batch_size: 32
-    backend: LMDB
-  }
-}
-layer {
-  name: "mstar"
-  type: "Data"
-  top: "data"
-  top: "label"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "examples/mstar/mstar_val_aug_lmdb"
-    batch_size: 32
-    backend: LMDB
-  }
+  input_param { shape: { dim: 1 dim: 1 dim: 96 dim: 96 } }
 }
 layer {
   name: "conv1"
@@ -291,19 +263,8 @@ layer {
   }
 }
 layer {
-  name: "accuracy"
-  type: "Accuracy"
-  bottom: "ip3"
-  bottom: "label"
-  top: "accuracy"
-  include {
-    phase: TEST
-  }
-}
-layer {
   name: "loss"
-  type: "SoftmaxWithLoss"
+  type: "Softmax"
   bottom: "ip3"
-  bottom: "label"
   top: "loss"
 }

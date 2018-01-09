@@ -59,9 +59,9 @@ addpath(genpath('.\build\Release'));
 caffe.set_mode_gpu();
 caffe.set_device(0);
 % 加载网络文件
-net_model = '.\examples\mstar\mstar_deploy_96_2.prototxt';
+net_model = '.\examples\mstar\mstar_deploy_3.prototxt';
 % 加载参数文件
-net_weights = '.\examples\mstar\mstar_96_iter_51600.caffemodel';
+net_weights = '.\examples\mstar\mstar_96_3_iter_51600.caffemodel';
 phase = 'test';
 % 初始化网络
 net = caffe.Net(net_model, net_weights, phase);

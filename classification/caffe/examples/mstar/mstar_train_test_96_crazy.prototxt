@@ -1,4 +1,4 @@
-name: "mstar-alex"
+name: "mstar-CNN14-mini"
 layer {
   name: "mstar"
   type: "Data"
@@ -93,32 +93,9 @@ layer {
   }
 }
 layer {
-  name: "conv2_c"
-  type: "Convolution"
-  bottom: "pool1"
-  top: "conv2_c"
-  param {
-    lr_mult: 1
-  }
-  param {
-    lr_mult: 2
-  }
-  convolution_param {
-    num_output: 8
-    kernel_size: 1
-    stride: 1
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "conv2_c"
+  bottom: "pool1"
   top: "conv2"
   param {
     lr_mult: 1

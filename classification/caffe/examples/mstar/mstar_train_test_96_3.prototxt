@@ -285,6 +285,15 @@ layer {
   top: "ip1"
 }
 layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "ip1"
+  top: "ip1"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
   name: "ip2"
   type: "InnerProduct"
   bottom: "ip1"
@@ -310,6 +319,15 @@ layer {
   type: "ReLU"
   bottom: "ip2"
   top: "ip2"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "ip2"
+  top: "ip2"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
 }
 layer {
   name: "ip3"
