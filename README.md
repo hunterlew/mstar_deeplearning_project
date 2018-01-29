@@ -2,6 +2,8 @@ mstar_deeplearning_project
 ==========================
 The repository is my graduation project about radar target classification, detection and recognition on public MSTAR using deep learning method. The main framework is based on caffe and faster-rcnn using matlab interface with a bit modification. 
 
+Besides, there is another [repository](https://github.com/hunterlew/convolution_network_on_FPGA) built recently about my graduation project, dealing with network acceleration on FPGA.
+
 Pre-requisites
 --------------
 The project is supposed to run on win7 or above. Before running the project, please checkout if your PC supports Nvidia GPU computing with compute capability 6.1 like GTX1080 and cuda v8.0, and a certain higher version of Matlab, like Matlab 2015b. Besides, python3.5 is needed and I recommend you directly install Anaconda3-4.2.0-Windows-x86_64.exe and add it to system path. No other installation and compilation is required since the repository is a release version. You can also make your own changes by compiling [caffe](https://github.com/BVLC/caffe/tree/windows) and [faster-rcnn](https://github.com/ShaoqingRen/faster_rcnn) yourselves. 
